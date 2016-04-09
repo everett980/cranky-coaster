@@ -46,7 +46,10 @@ router.post('/api/cupReadings', (req, res, next) => {
 
   Promise.all([mongoProm, firebaseProm])
   .then( ([cupReading]) => { res.json(cupReading)} )
-  .catch( logError );
+  .catch( (err) => {
+    logError(err);
+    res.send(err);
+  } );
 });
 
 router.post('/sms', (req, res, next) => {
