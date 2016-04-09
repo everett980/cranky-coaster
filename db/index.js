@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
-import { DB_URI } from '../secrets';
+import { MONGODB_URI } from '../secrets';
 
-mongoose.connect(DB_URI);
+mongoose.connect(MONGODB_URI);
 
 require('./CupReading');
