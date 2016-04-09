@@ -37,7 +37,8 @@ schema.static.getForToday = function() {
 schema.static.isDrinkingEnough = function() {
   this.constructor.getForToday()
   .then( (cupReadings) => {
-    const totalDrunk = forceToVol( cupReadings.reduce( (currSum, nextCr) => currSum + nextCr, 0 ) );
+    const totalChangeInForce = cupReadings.reduce( (sum, cr) => sum + cr.changeinForce, 0 );
+    const totalDrunk = forceToVol(totalChangeInForce);
     const shouldHaveDrunk = moment().hours() / 24 * RECOMMENDED_CONSUMPTION;
 
     return totalDrunk >= shouldHaveDrunk;
