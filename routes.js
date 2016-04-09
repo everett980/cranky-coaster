@@ -15,6 +15,13 @@ const router = Router();
 const logError = (sadness) => { console.log( chalk.red(sadness) ); };
 const logSuccess = (happiness) => { console.log( chalk.green(happiness) ); };
 
+const handleError = (res) => (err) => {
+  logError(err);
+  res.send(err);
+}
+
+const sendRes = (res) => (content) => { console.log(content); res.send(content) };
+
 // yes Everett, yessss.
 const genDelSuccessMsg = () => {
   const messages = [
@@ -37,7 +44,7 @@ const genDelSuccessMsg = () => {
 router.get('/api/cupReadings', (req, res, next) => {
   CupReading.find()
   .then( (cupReadings) => { res.json(cupReadings) } )
-  .catch( logError );
+  .catch( handleError(res) );
 })
 
 router.post('/api/cupReadings', (req, res, next) => {
@@ -46,18 +53,9 @@ router.post('/api/cupReadings', (req, res, next) => {
 
   Promise.all([mongoProm, firebaseProm])
   .then( ([cupReading]) => { res.json(cupReading)} )
-  .catch( (err) => {
-    logError(err);
-    res.send(err);
-  } );
+  .catch( handleError(res) );
 });
 
-// exposed for tests
-router.get('/api/cupReadings/isEnough', (req, res, next) => {
-  CupReading.isDrinkingEnough()
-  .then(::res.send)
-  .catch(::console.error);
-});
 
 router.post('/sms', (req, res, next) => {
   sendSms('Yus Yestynn')
@@ -65,14 +63,39 @@ router.post('/sms', (req, res, next) => {
   .catch( (err) => { res.send(err) } );
 });
 
+
+// the following routes are exposed solely for tests
+
+router.get('/api/cupReadings/isEnough', (req, res, next) => {
+  CupReading.isDrinkingEnough()
+  .then( sendRes(res) )
+  .catch( handleError(res) );
+});
+
+router.get('/api/cupReadings/drunkToday', (req, res, next) => {
+  CupReading.drunkToday()
+  .then( sendRes(res) )
+  .catch( handleError(res) );
+});
+
 router.delete('/clearFb', (req, res, next) => {
   firebaseRef.set([])
   .then( logSuccess )
   .then( () => { res.send( genDelSuccessMsg() ) })
-  .catch( (err) => {
-    logError(err);
-    res.status(500).send(`bad things happened. But it's okay, because I'm sorry.`)
-  } )
+  .catch( handleError(res) );
+});
+
+router.delete('/clearMongo', (req, res, next) => {
+  mongoose.connection.db.dropCollection('cupreadings', (err, result) => {
+    if (err) {
+      console.error(err);
+      res.send( `sadness :(` );
+    }
+    else {
+      console.log(result);
+      res.send( `happiness! :)` );
+    }
+  });
 });
 
 module.exports = router;

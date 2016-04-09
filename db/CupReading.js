@@ -6,8 +6,9 @@
 import mongoose, { Schema } from 'mongoose';
 import moment from 'moment';
 
-const RECOMMENDED_CONSUMPTION = 2000; // 2 litres
-const forceToVol = (force) => force * 2.5;
+import { FORCE_MULTIPLIER, RECOMMENDED_CONSUMPTION } from '../constants';
+
+const forceToVol = (force) => force * FORCE_MULTIPLIER;
 
 const schema = new Schema({
   changeInForce: {
@@ -24,25 +25,34 @@ const schema = new Schema({
   },
 });
 
-schema.static.getForToday = function() {
+schema.statics.getForToday = function() {
   const today = moment().startOf('day');
-  const tomorrow = moment(day).add(1, 'day');
+  const tomorrow = moment(today).add(1, 'day');
 
-  return this.constructor.find({ time: {
+  return this.find({ time: {
     $gte: today.toDate(),
     $lte: tomorrow.toDate(),
   } });
 };
 
-schema.static.isDrinkingEnough = function() {
-  this.constructor.getForToday()
+schema.statics.drunkToday = function() {
+  return this.getForToday()
   .then( (cupReadings) => {
-    const totalChangeInForce = cupReadings.reduce( (sum, cr) => sum + cr.changeinForce, 0 );
-    const totalDrunk = forceToVol(totalChangeInForce);
+    const totalChangeInForce = cupReadings.reduce( (sum, cr) => sum + cr.changeInForce, 0 );
+
+    return forceToVol(totalChangeInForce);
+  });
+}
+
+schema.statics.isDrinkingEnough = function() {
+  return this.drunkToday()
+  .then( (totalDrunk) => {
     const shouldHaveDrunk = moment().hours() / 24 * RECOMMENDED_CONSUMPTION;
 
+    return 42;
+
     return totalDrunk >= shouldHaveDrunk;
-  })
+  });
 }
 
 mongoose.model('CupReading', schema);
