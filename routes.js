@@ -52,6 +52,13 @@ router.post('/api/cupReadings', (req, res, next) => {
   } );
 });
 
+// exposed for tests
+router.get('/api/cupReadings/isEnough', (req, res, next) => {
+  CupReading.isDrinkingEnough()
+  .then(::res.send)
+  .catch(::console.error);
+});
+
 router.post('/sms', (req, res, next) => {
   sendSms('Yus Yestynn')
   .then( () => { res.send('Sent!') } )

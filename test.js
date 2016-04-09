@@ -1,7 +1,7 @@
 import rp from 'request-promise';
 
 rp({
-  body: JSON.stringify({ forceVal: 1 }),
+  body: JSON.stringify({ changeInForce: 1 }),
   method: 'POST',
   uri: `https://lit-savannah-65925.herokuapp.com/api/cupReadings`,
   headers: {

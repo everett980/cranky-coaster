@@ -10,7 +10,7 @@ const RECOMMENDED_CONSUMPTION = 2000; // 2 litres
 const forceToVol = (force) => force * 2.5;
 
 const schema = new Schema({
-  changeinForce: {
+  changeInForce: {
     type: Number,
     required: true,
   },
