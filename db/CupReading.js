@@ -4,9 +4,10 @@
 // Also, this comment should have been a multi-line comment.
 
 import mongoose, { Schema } from 'mongoose';
+import moment from 'moment';
 
 const schema = new Schema({
-  forceVal: {
+  changeinForce: {
     type: Number,
     required: true,
   },
@@ -19,5 +20,22 @@ const schema = new Schema({
     default: ::Date.now
   },
 });
+
+schema.static.getForToday = function() {
+  const today = moment().startOf('day');
+  const tomorrow = moment(day).add(1, 'day');
+
+  return this.constructor.find({ time: {
+    $gte: today.toDate(),
+    $lte: tomorrow.toDate(),
+  } });
+};
+
+schema.static.isDrinkingEnough = function() {
+  this.constructor.getForToday()
+  .then( (cupReadings) => {
+    const totalDrunk = cupReadings.reduce( (currSum, nextCr) => currSum + nextCr, 0 );
+  })
+}
 
 mongoose.model('CupReading', schema);
