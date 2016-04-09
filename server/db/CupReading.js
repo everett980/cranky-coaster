@@ -14,6 +14,10 @@ const schema = new Schema({
     type: Boolean,
     default: false,
   },
+  time: {
+    type: Date,
+    default: ::Date.now
+  },
 });
 
 mongoose.model('CupReading', schema);

@@ -3,10 +3,12 @@ import chalk from 'chalk';
 import mongoose from 'mongoose';
 import Firebase from 'firebase';
 
+import { getRandEl } from './helpers';
 import { FIREBASE_URI } from './secrets';
+import sendSms from './helpers/sendSms';
 
 const CupReading = mongoose.model('CupReading');
-const fbRef = new Firebase(FIREBASE_URI);
+const firebaseRef = new Firebase(FIREBASE_URI);
 const router = Router();
 
 // let's paint the world
@@ -27,7 +29,9 @@ const genDelSuccessMsg = () => {
     'Crank crank!',
   ];
 
-  return messages[ Math.floor( messages.length * Math.random() ) ];
+  console.log(getRandEl(messages))
+
+  return getRandEl(messages);
 };
 
 router.get('/', (req, res, next) => {
@@ -38,15 +42,21 @@ router.get('/', (req, res, next) => {
 
 router.post('/', (req, res, next) => {
   const mongoProm = CupReading.create(req.body);
-  const fbProm = fbRef.push(req.body);
+  const firebaseProm = firebaseRef.push(req.body);
 
-  Promise.all([mongoProm, fbProm])
+  Promise.all([mongoProm, firebaseProm])
   .then( ([cupReading]) => { res.json(cupReading)} )
   .catch( logError );
 });
 
+router.post('/sms', (req, res, next) => {
+  sendSms('Yus Yestynn')
+  .then( () => { res.send('Sent!') } )
+  .catch( (err) => { res.send(err) } );
+});
+
 router.delete('/clearFb', (req, res, next) => {
-  fbRef.set([])
+  firebaseRef.set([])
   .then( logSuccess )
   .then( () => { res.send( genDelSuccessMsg() ) })
   .catch( (err) => {
