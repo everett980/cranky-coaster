@@ -13,7 +13,7 @@ const router = Router();
 const logError = (sadness) => { console.log( chalk.red(sadness) ); };
 const logSuccess = (happiness) => { console.log( chalk.green(happiness) ); };
 
-// yes Everett, yes.
+// yes Everett, yessss.
 const genDelSuccessMsg = () => {
   const messages = [
     'Shut the fuck up, Adele',
