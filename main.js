@@ -21,3 +21,5 @@ app.listen(PORT, () => {
 app.use( bodyParser.json() );
 app.use( morgan('dev') );
 app.use( require('./routes') );
+
+require('./jobs');
