@@ -13,6 +13,23 @@ const router = Router();
 const logError = (sadness) => { console.log( chalk.red(sadness) ); };
 const logSuccess = (happiness) => { console.log( chalk.green(happiness) ); };
 
+// yes Everett, yes.
+const genDelSuccessMsg = () => {
+  const messages = [
+    'Shut the fuck up, Adele',
+    'I set fire to the base',
+    '...Boom!',
+    'The sky is falling! But in a good way.',
+    'I am become death, destroyer of firebases',
+    'Yes.',
+    'You loyal',
+    'Buy yo mamma a house',
+    'Crank crank!',
+  ];
+
+  return messages[ Math.floor( messages.length * Math.random() ) ];
+};
+
 router.get('/', (req, res, next) => {
   CupReading.find()
   .then( (cupReadings) => { res.json(cupReadings) } )
@@ -31,7 +48,7 @@ router.post('/', (req, res, next) => {
 router.delete('/clearFb', (req, res, next) => {
   fbRef.set([])
   .then( logSuccess )
-  .then( () => { res.send('and i set fire to the base') })
+  .then( () => { res.send( genDelSuccessMsg() ) })
   .catch( (err) => {
     logError(err);
     res.status(500).send(`bad things happened. But it's okay, because I'm sorry.`)
