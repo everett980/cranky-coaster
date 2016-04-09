@@ -1,3 +1,5 @@
+require('./secrets')
+
 import bodyParser from 'body-parser';
 import chalk from 'chalk';
 import express from 'express';
@@ -7,7 +9,7 @@ import morgan from 'morgan';
 require('./db');
 
 // Fuck l337
-const PORT = 1338;
+const PORT = process.env.PORT || 1338;
 
 const app = express();
 

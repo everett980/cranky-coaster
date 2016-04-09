@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import twilio from 'twilio';
 
-import { PHONE_NUMBER, TWILIO_SID, TWILIO_AUTH_TOKEN } from '../secrets';
+const { PHONE_NUMBER, TWILIO_SID, TWILIO_AUTH_TOKEN } = process.env;
 
 const client = twilio(TWILIO_SID, TWILIO_AUTH_TOKEN);
 

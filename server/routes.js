@@ -4,9 +4,9 @@ import mongoose from 'mongoose';
 import Firebase from 'firebase';
 
 import { getRandEl } from './helpers';
-import { FIREBASE_URI } from './secrets';
 import sendSms from './helpers/sendSms';
 
+const { FIREBASE_URI } = process.env;
 const CupReading = mongoose.model('CupReading');
 const firebaseRef = new Firebase(FIREBASE_URI);
 const router = Router();

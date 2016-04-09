@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-import { MONGODB_URI } from '../secrets';
+const { MONGODB_URI } = process.env;
 
 mongoose.connect(MONGODB_URI);
 
