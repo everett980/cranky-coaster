@@ -6,6 +6,9 @@
   "scripts": {
     "start": "nodemon start.js"
   },
+  "engines": {
+    "node": "4.1.1"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
