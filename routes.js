@@ -4,9 +4,9 @@ import mongoose from 'mongoose';
 import Firebase from 'firebase';
 
 import { getRandEl } from './helpers';
-import { FIREBASE_URI } from './secrets';
 import sendSms from './helpers/sendSms';
 
+const { FIREBASE_URI } = process.env;
 const CupReading = mongoose.model('CupReading');
 const firebaseRef = new Firebase(FIREBASE_URI);
 const router = Router();
@@ -14,6 +14,13 @@ const router = Router();
 // let's paint the world
 const logError = (sadness) => { console.log( chalk.red(sadness) ); };
 const logSuccess = (happiness) => { console.log( chalk.green(happiness) ); };
+
+const handleError = (res) => (err) => {
+  logError(err);
+  res.send(err);
+}
+
+const sendVal = (res) => (content) => { res.send(`${content}`) };
 
 // yes Everett, yessss.
 const genDelSuccessMsg = () => {
@@ -34,20 +41,21 @@ const genDelSuccessMsg = () => {
   return getRandEl(messages);
 };
 
-router.get('/', (req, res, next) => {
+router.get('/api/cupReadings', (req, res, next) => {
   CupReading.find()
   .then( (cupReadings) => { res.json(cupReadings) } )
-  .catch( logError );
+  .catch( handleError(res) );
 })
 
-router.post('/', (req, res, next) => {
+router.post('/api/cupReadings', (req, res, next) => {
   const mongoProm = CupReading.create(req.body);
   const firebaseProm = firebaseRef.push(req.body);
 
   Promise.all([mongoProm, firebaseProm])
   .then( ([cupReading]) => { res.json(cupReading)} )
-  .catch( logError );
+  .catch( handleError(res) );
 });
+
 
 router.post('/sms', (req, res, next) => {
   sendSms('Yus Yestynn')
@@ -55,14 +63,39 @@ router.post('/sms', (req, res, next) => {
   .catch( (err) => { res.send(err) } );
 });
 
+
+// the following routes are exposed solely for tests
+
+router.get('/api/cupReadings/isEnough', (req, res, next) => {
+  CupReading.isDrinkingEnough()
+  .then( sendVal(res) )
+  .catch( handleError(res) );
+});
+
+router.get('/api/cupReadings/drunkToday', (req, res, next) => {
+  CupReading.drunkToday()
+  .then( sendVal(res) )
+  .catch( handleError(res) );
+});
+
 router.delete('/clearFb', (req, res, next) => {
   firebaseRef.set([])
   .then( logSuccess )
   .then( () => { res.send( genDelSuccessMsg() ) })
-  .catch( (err) => {
-    logError(err);
-    res.status(500).send(`bad things happened. But it's okay, because I'm sorry.`)
-  } )
+  .catch( handleError(res) );
+});
+
+router.delete('/clearMongo', (req, res, next) => {
+  mongoose.connection.db.dropCollection('cupreadings', (err, result) => {
+    if (err) {
+      console.error(err);
+      res.send( `sadness :(` );
+    }
+    else {
+      console.log(result);
+      res.send( `happiness! :)` );
+    }
+  });
 });
 
 module.exports = router;
