@@ -6,6 +6,9 @@
 import mongoose, { Schema } from 'mongoose';
 import moment from 'moment';
 
+const RECOMMENDED_CONSUMPTION = 2000; // 2 litres
+const forceToVol = (force) => force * 2.5;
+
 const schema = new Schema({
   changeinForce: {
     type: Number,
@@ -34,7 +37,10 @@ schema.static.getForToday = function() {
 schema.static.isDrinkingEnough = function() {
   this.constructor.getForToday()
   .then( (cupReadings) => {
-    const totalDrunk = cupReadings.reduce( (currSum, nextCr) => currSum + nextCr, 0 );
+    const totalDrunk = forceToVol( cupReadings.reduce( (currSum, nextCr) => currSum + nextCr, 0 ) );
+    const shouldHaveDrunk = moment().hours() / 24 * RECOMMENDED_CONSUMPTION;
+
+    return totalDrunk >= shouldHaveDrunk;
   })
 }
 
