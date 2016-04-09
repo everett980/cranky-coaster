@@ -20,7 +20,7 @@ const handleError = (res) => (err) => {
   res.send(err);
 }
 
-const sendRes = (res) => (content) => { console.log(content); res.send(content) };
+const sendVal = (res) => (content) => { res.send(`${content}`) };
 
 // yes Everett, yessss.
 const genDelSuccessMsg = () => {
@@ -68,13 +68,13 @@ router.post('/sms', (req, res, next) => {
 
 router.get('/api/cupReadings/isEnough', (req, res, next) => {
   CupReading.isDrinkingEnough()
-  .then( sendRes(res) )
+  .then( sendVal(res) )
   .catch( handleError(res) );
 });
 
 router.get('/api/cupReadings/drunkToday', (req, res, next) => {
   CupReading.drunkToday()
-  .then( sendRes(res) )
+  .then( sendVal(res) )
   .catch( handleError(res) );
 });
 

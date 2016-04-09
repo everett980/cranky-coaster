@@ -49,8 +49,6 @@ schema.statics.isDrinkingEnough = function() {
   .then( (totalDrunk) => {
     const shouldHaveDrunk = moment().hours() / 24 * RECOMMENDED_CONSUMPTION;
 
-    return 42;
-
     return totalDrunk >= shouldHaveDrunk;
   });
 }
