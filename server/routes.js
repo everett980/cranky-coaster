@@ -34,7 +34,7 @@ router.delete('/clearFb', (req, res, next) => {
   .then( () => { res.send('and i set fire to the base') })
   .catch( (err) => {
     logError(err);
-    res.status(500).send('bad things happeneded.')
+    res.status(500).send(`bad things happened. But it's okay, because I'm sorry.`)
   } )
 });
 
