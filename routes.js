@@ -34,13 +34,13 @@ const genDelSuccessMsg = () => {
   return getRandEl(messages);
 };
 
-router.get('/', (req, res, next) => {
+router.get('/api/cupReadings', (req, res, next) => {
   CupReading.find()
   .then( (cupReadings) => { res.json(cupReadings) } )
   .catch( logError );
 })
 
-router.post('/', (req, res, next) => {
+router.post('/api/cupReadings', (req, res, next) => {
   const mongoProm = CupReading.create(req.body);
   const firebaseProm = firebaseRef.push(req.body);
 
