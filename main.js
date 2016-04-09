@@ -1,4 +1,4 @@
-require('./secrets')
+if (process.env.NODE_ENV !== 'production') require('./secrets');
 
 import bodyParser from 'body-parser';
 import chalk from 'chalk';
