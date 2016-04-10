@@ -7,6 +7,8 @@ import Promise from 'bluebird';
 
 import { getRandEl } from './helpers';
 import sendSms from './helpers/sendSms';
+import { overallJob } from './jobs';
+
 import tweet from './helpers/tweet';
 import * as CONSTANTS from './constants';
 
@@ -112,6 +114,11 @@ router.delete('/clearMongo', (req, res, next) => {
       res.send( `happiness! :)` );
     }
   });
+});
+
+router.get('/api/runJob', (req, res, next) => {
+	overallJob();
+	res.status(200).send('hullllo');
 });
 
 module.exports = router;
