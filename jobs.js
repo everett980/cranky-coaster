@@ -15,7 +15,7 @@ const yell = () => { };
 const postTweet = () => { };
 const sendEmail = () => { };
 
-const overallJob = () => {
+export const overallJob = () => {
   console.log('doing the thing');
   CupReading.isDrinkingEnough()
   .then( (isDrinkingEnough) => {

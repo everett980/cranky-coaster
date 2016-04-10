@@ -5,6 +5,7 @@ import Firebase from 'firebase';
 
 import { getRandEl } from './helpers';
 import sendSms from './helpers/sendSms';
+import { overallJob } from './jobs';
 
 const { FIREBASE_URI } = process.env;
 const CupReading = mongoose.model('CupReading');
@@ -96,6 +97,11 @@ router.delete('/clearMongo', (req, res, next) => {
       res.send( `happiness! :)` );
     }
   });
+});
+
+router.get('/api/runJob', (req, res, next) => {
+	overallJob();
+	res.status(200).send('hullllo');
 });
 
 module.exports = router;
