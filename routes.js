@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import chalk from 'chalk';
 import mongoose from 'mongoose';
+import moment from 'moment';
 import Firebase from 'firebase';
+import Promise from 'bluebird';
 
 import { getRandEl } from './helpers';
 import sendSms from './helpers/sendSms';
@@ -51,7 +53,10 @@ router.get('/api/cupReadings', (req, res, next) => {
 
 router.post('/api/cupReadings', (req, res, next) => {
   const mongoProm = CupReading.create(req.body);
-  const firebaseProm = firebaseRef.push(req.body);
+
+  let firebaseProm;
+  if (!Array.isArray(req.body)) firebaseProm = firebaseRef.push(req.body);
+  else firebaseProm = Promise.map( req.body, (cr) => firebaseRef.push(cr) );
 
   Promise.all([mongoProm, firebaseProm])
   .then( ([cupReading]) => { res.json(cupReading)} )
@@ -89,7 +94,8 @@ router.get('/api/cupReadings/drunkToday', (req, res, next) => {
 });
 
 router.delete('/clearFb', (req, res, next) => {
-  firebaseRef.set([])
+  const date = moment().toDate();
+  firebaseRef.set([{ changeInValue: 0, time: date }])
   .then( logSuccess )
   .then( () => { res.send( genDelSuccessMsg() ) })
   .catch( handleError(res) );
