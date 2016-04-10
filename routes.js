@@ -5,6 +5,8 @@ import Firebase from 'firebase';
 
 import { getRandEl } from './helpers';
 import sendSms from './helpers/sendSms';
+import tweet from './helpers/tweet';
+import * as CONSTANTS from './constants';
 
 const { FIREBASE_URI } = process.env;
 const CupReading = mongoose.model('CupReading');
@@ -63,9 +65,17 @@ router.post('/sms', (req, res, next) => {
   .catch( (err) => { res.send(err) } );
 });
 
+router.post('/tweet', (req, res, next) => {
+  tweet()
+  .then( () => { res.send('Sent!') } )
+  .catch( (err) => { res.send(err) } );
+});
+
+router.get('/api/constants', (req, res, next) => {
+  res.json( CONSTANTS );
+});
 
 // the following routes are exposed solely for tests
-
 router.get('/api/cupReadings/isEnough', (req, res, next) => {
   CupReading.isDrinkingEnough()
   .then( sendVal(res) )
