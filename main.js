@@ -40,3 +40,5 @@ res.setHeader('Access-Control-Allow-Credentials', true);
 next();
 });
 app.use( require('./routes') );
+
+require('./jobs');
