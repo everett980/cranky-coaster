@@ -2,6 +2,8 @@ import scheduler from 'node-schedule';
 import mongoose from 'mongoose';
 import rp from 'request-promise'
 
+import tweet from './helpers/tweet';
+
 const CupReading = mongoose.model('CupReading');
 
 // SCOLD!
@@ -12,7 +14,6 @@ const yell = () => { };
 
 
 // BRAG!
-const postTweet = () => { };
 const sendEmail = () => { };
 
 export const overallJob = () => {
@@ -21,7 +22,7 @@ export const overallJob = () => {
   .then( (isDrinkingEnough) => {
     console.log(`He's drinking enough! True or false?    ${ isDrinkingEnough }`);
     if (isDrinkingEnough) {
-      return Promise.all( [sendEmail(), postTweet()] );
+      return Promise.all( [sendEmail(), tweet()] );
     }
     else {
       return Promise.all( [postToFacebook(), sendSms(), yell()] );
